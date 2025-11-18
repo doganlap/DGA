@@ -1,0 +1,14 @@
+node_modules/
+.env
+.env.local
+.env.production.local
+*.log
+.DS_Store
+.vscode/
+.idea/
+coverage/
+dist/
+build/
+*.test.js
+*.spec.js
+.vercel
