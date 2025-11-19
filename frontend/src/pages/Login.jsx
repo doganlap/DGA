@@ -58,7 +58,7 @@ function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  placeholder="admin@dga.sa"
+                  placeholder="your.email@dga.sa"
                   autoComplete="email"
                   required
                 />
@@ -91,11 +91,6 @@ function Login() {
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
-
-          <div className="mt-6 text-center text-sm text-gray-600">
-            <p>Demo Credentials:</p>
-            <p className="font-mono mt-1">admin@dga.sa / DGA@2025</p>
-          </div>
         </div>
 
         <div className="text-center mt-6 text-white text-sm">

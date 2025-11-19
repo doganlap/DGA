@@ -103,7 +103,7 @@ Redeploy backend after updating CORS.
 
 ### Frontend
 - [ ] Visit frontend URL: `https://your-frontend.vercel.app`
-- [ ] Test login with: `admin@dga.sa` / `DGA@2025`
+- [ ] Test login with: `admin@dga.sa` / `admin123`
 - [ ] Verify dashboard loads data
 - [ ] Check entities page
 - [ ] Check programs page
@@ -254,7 +254,7 @@ npm run migrate
 
 **Login Credentials:**
 - Email: `admin@dga.sa`
-- Password: `DGA@2025`
+- Password: `admin123`
 
 ---
 

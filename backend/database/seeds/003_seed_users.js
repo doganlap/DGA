@@ -24,8 +24,9 @@ exports.seed = async function(knex) {
   const users = [];
   const regions = ['Central', 'Western', 'Eastern', 'Northern', 'Southern'];
   
-  // Hash password once (same for all dev users)
-  const passwordHash = await bcrypt.hash('DGA@2025', 10);
+  // NO DEFAULT PASSWORD - Users must be created with secure passwords by admin
+  // Generate a random secure hash that won't match any simple password
+  const passwordHash = await bcrypt.hash(uuidv4() + Date.now().toString(), 12);
 
   // 1. DGA Admins (50 users)
   for (let i = 1; i <= 50; i++) {
@@ -212,5 +213,5 @@ exports.seed = async function(knex) {
   console.log(`   - Compliance Auditors: ${users.filter(u => u.role === 'compliance_auditor').length}`);
   console.log(`   - Analytics Leads: ${users.filter(u => u.role === 'analytics_lead').length}`);
   console.log(`   - Ministry Users: ${users.filter(u => u.role === 'ministry_user').length}`);
-  console.log(`\n   Default password for all users: DGA@2025`);
+  console.log(`\n   ⚠️  NO DEFAULT PASSWORDS - Admin must set passwords manually for security`);
 };

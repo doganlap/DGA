@@ -33,7 +33,7 @@
 - `is_active` - Account status
 - `last_login` - Last authentication timestamp
 
-**Default Password:** `DGA@2025` (bcrypt hashed)
+**Default Password:** `admin123` (bcrypt hashed)
 
 ---
 

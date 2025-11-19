@@ -62,8 +62,8 @@ exports.getEntityById = async (req, res) => {
     // Get entity budget
     const budget = await db('dga_budget')
       .where({ entity_id: id })
-      .sum('allocated as total_allocated')
-      .sum('spent as total_spent')
+      .sum('allocated_amount as total_allocated')
+      .sum('spent_amount as total_spent')
       .first();
     
     res.json({
@@ -180,10 +180,10 @@ exports.getAllPrograms = async (req, res) => {
     const { entity_id, status, page = 1, limit = 50 } = req.query;
     
     let query = db('dga_programs')
-      .leftJoin('dga_entities', 'dga_programs.entity_id', 'dga_entities.id')
+      .leftJoin('dga_entities', 'dga_programs.entity_id', 'dga_entities.entity_id')
       .select(
         'dga_programs.*',
-        'dga_entities.entity_name',
+        'dga_entities.entity_name_en as entity_name',
         'dga_entities.region'
       );
     
@@ -223,9 +223,9 @@ exports.getProgramById = async (req, res) => {
     const { id } = req.params;
     
     const program = await db('dga_programs')
-      .leftJoin('dga_entities', 'dga_programs.entity_id', 'dga_entities.id')
-      .where({ 'dga_programs.id': id })
-      .select('dga_programs.*', 'dga_entities.entity_name', 'dga_entities.region')
+      .leftJoin('dga_entities', 'dga_programs.entity_id', 'dga_entities.entity_id')
+      .where({ 'dga_programs.program_id': id })
+      .select('dga_programs.*', 'dga_entities.entity_name_en as entity_name', 'dga_entities.region')
       .first();
     
     if (!program) {
@@ -357,10 +357,10 @@ exports.getProjectById = async (req, res) => {
     const { id } = req.params;
     
     const project = await db('dga_projects')
-      .leftJoin('dga_programs', 'dga_projects.program_id', 'dga_programs.id')
-      .leftJoin('dga_entities', 'dga_projects.entity_id', 'dga_entities.id')
-      .where({ 'dga_projects.id': id })
-      .select('dga_projects.*', 'dga_programs.program_name', 'dga_entities.entity_name')
+      .leftJoin('dga_programs', 'dga_projects.program_id', 'dga_programs.program_id')
+      .leftJoin('dga_entities', 'dga_projects.entity_id', 'dga_entities.entity_id')
+      .where({ 'dga_projects.project_id': id })
+      .select('dga_projects.*', 'dga_programs.program_name', 'dga_entities.entity_name_en as entity_name')
       .first();
     
     if (!project) {
@@ -461,7 +461,7 @@ exports.getNationalOverview = async (req, res) => {
   try {
     const totalEntities = await db('dga_entities').count('* as count').first();
     const totalPrograms = await db('dga_programs').count('* as count').first();
-    const totalBudget = await db('dga_budget').sum('allocated as total').first();
+    const totalBudget = await db('dga_budget').sum('allocated_amount as total').first();
     const avgMaturity = await db('dga_entities').avg('digital_maturity_score as avg').first();
     
     const regionSummary = await db('dga_entities')
@@ -509,8 +509,8 @@ exports.getRegionalReport = async (req, res) => {
     
     const budget = await db('dga_budget')
       .where({ region })
-      .sum('allocated as total_allocated')
-      .sum('spent as total_spent')
+      .sum('allocated_amount as total_allocated')
+      .sum('spent_amount as total_spent')
       .first();
     
     res.json({
@@ -639,8 +639,8 @@ exports.getAllTickets = async (req, res) => {
     const { status, priority } = req.query;
     
     let query = db('dga_tickets')
-      .leftJoin('dga_entities', 'dga_tickets.entity_id', 'dga_entities.id')
-      .select('dga_tickets.*', 'dga_entities.entity_name');
+      .leftJoin('dga_entities', 'dga_tickets.entity_id', 'dga_entities.entity_id')
+      .select('dga_tickets.*', 'dga_entities.entity_name_en as entity_name');
     
     if (status) query = query.where({ 'dga_tickets.status': status });
     if (priority) query = query.where({ 'dga_tickets.priority': priority });
@@ -737,10 +737,10 @@ exports.getAllUsers = async (req, res) => {
     const { role, region, status, page = 1, limit = 1000 } = req.query;
     
     let query = db('dga_users')
-      .leftJoin('dga_entities', 'dga_users.entity_id', 'dga_entities.id')
+      .leftJoin('dga_entities', 'dga_users.entity_id', 'dga_entities.entity_id')
       .select(
         'dga_users.*',
-        'dga_entities.entity_name as entity_name',
+        'dga_entities.entity_name_en as entity_name',
         'dga_entities.region as entity_region'
       );
     
@@ -749,7 +749,7 @@ exports.getAllUsers = async (req, res) => {
     if (status) query = query.where({ 'dga_users.status': status });
     
     const offset = (page - 1) * limit;
-    const users = await query.limit(limit).offset(offset).orderBy('dga_users.name_en');
+    const users = await query.limit(limit).offset(offset).orderBy('dga_users.full_name');
     
     // Remove passwords from response
     const sanitizedUsers = users.map(user => {
@@ -785,11 +785,11 @@ exports.getUserById = async (req, res) => {
     const { id } = req.params;
     
     const user = await db('dga_users')
-      .leftJoin('dga_entities', 'dga_users.entity_id', 'dga_entities.id')
-      .where({ 'dga_users.id': id })
+      .leftJoin('dga_entities', 'dga_users.entity_id', 'dga_entities.entity_id')
+      .where({ 'dga_users.user_id': id })
       .select(
         'dga_users.*',
-        'dga_entities.entity_name as entity_name',
+        'dga_entities.entity_name_en as entity_name',
         'dga_entities.region as entity_region'
       )
       .first();

@@ -5,12 +5,14 @@ const { body } = require('express-validator');
 const { db } = require('../config/database');
 const { authenticate, generateToken } = require('../middleware/auth');
 const { validate } = require('../middleware/validation');
+const { checkAccountLock, recordFailedAttempt, resetAttempts } = require('../middleware/loginAttempts');
 const logger = require('../utils/logger');
 
 // @route   POST /api/auth/login
 // @desc    Login user and get token
 // @access  Public
 router.post('/login', 
+  checkAccountLock, // Check if account is locked before processing
   [
     body('email').isEmail().withMessage('Please provide a valid email'),
     body('password').notEmpty().withMessage('Password is required'),
@@ -26,9 +28,12 @@ router.post('/login',
         .first();
 
       if (!user) {
+        // Record failed attempt (user not found)
+        const attemptInfo = recordFailedAttempt(email);
         return res.status(401).json({
           success: false,
           message: 'Invalid credentials',
+          attemptsRemaining: attemptInfo.attemptsRemaining,
         });
       }
 
@@ -43,11 +48,19 @@ router.post('/login',
       // Verify password
       const isPasswordValid = await bcrypt.compare(password, user.password_hash);
       if (!isPasswordValid) {
+        // Record failed attempt (wrong password)
+        const attemptInfo = recordFailedAttempt(email);
+        logger.warn(`Failed login attempt for ${email}. Attempts remaining: ${attemptInfo.attemptsRemaining}`);
+        
         return res.status(401).json({
           success: false,
           message: 'Invalid credentials',
+          attemptsRemaining: attemptInfo.attemptsRemaining,
         });
       }
+      
+      // Reset login attempts on successful login
+      resetAttempts(email);
 
       // Update last login
       await db('users')

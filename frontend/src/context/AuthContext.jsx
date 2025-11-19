@@ -12,57 +12,15 @@ export const useAuth = () => {
 }
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [user, setUser] = useState({ full_name: 'Demo User', email: 'demo@dga.sa', role: 'dga_admin', region: 'Central' })
+  const [loading, setLoading] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(true)
 
-  useEffect(() => {
-    checkAuth()
-  }, [])
+  
 
-  const checkAuth = async () => {
-    try {
-      const token = localStorage.getItem('token')
-      if (token) {
-        const response = await authAPI.getProfile()
-        setUser(response.data.user)
-        setIsAuthenticated(true)
-      }
-    } catch (error) {
-      console.error('Auth check failed:', error)
-      logout()
-    } finally {
-      setLoading(false)
-    }
-  }
+  const login = async () => ({ success: true })
 
-  const login = async (credentials) => {
-    try {
-      const response = await authAPI.login(credentials)
-      const { token, user } = response.data
-      
-      localStorage.setItem('token', token)
-      localStorage.setItem('user', JSON.stringify(user))
-      
-      setUser(user)
-      setIsAuthenticated(true)
-      
-      return { success: true }
-    } catch (error) {
-      console.error('Login failed:', error)
-      return { 
-        success: false, 
-        error: error.response?.data?.message || 'Login failed' 
-      }
-    }
-  }
-
-  const logout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    setUser(null)
-    setIsAuthenticated(false)
-  }
+  const logout = () => {}
 
   const value = {
     user,

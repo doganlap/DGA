@@ -13,6 +13,9 @@ The DGA Oversight Platform is a comprehensive digital governance system designed
 - **SAR 2.48 Billion** budget oversight and allocation
 - **Real-time KPI Tracking** and performance analytics
 - **Multi-region Architecture** (Central, Western, Eastern, Northern, Southern)
+- **🚀 Advanced Analytics** - Predictive budget forecasting, risk analysis, digital maturity scoring
+- **🛡️ Compliance Monitoring** - PDPL, NCA ECC, ISO 27001 automated compliance reporting
+- **⚙️ Workflow Automation** - Multi-level approvals, automated alerts, batch operations
 
 ### 🚀 Technology Stack
 
@@ -73,11 +76,9 @@ DGA/
 9. `dga_tickets` - Support tickets
 10. `dga_notifications` - System alerts
 
-### 🔐 Default Credentials
-```
-Email: admin@dga.sa
-Password: DGA@2025
-```
+### 🔐 Login Credentials
+
+Please contact your system administrator for login credentials.
 
 ### 🛠️ Installation & Setup
 
@@ -130,6 +131,27 @@ npm run dev
 - `GET /api/dga/reporting/overview` - Dashboard data
 - `GET /api/dga/reporting/region/:region` - Regional report
 - `GET /api/dga/reporting/kpis` - KPI reports
+
+**🚀 Advanced Analytics:**
+- `GET /api/advanced/analytics/budget-trends` - Budget utilization trends & predictions
+- `GET /api/advanced/analytics/predict-budget/:id` - AI-powered budget forecasting
+- `GET /api/advanced/analytics/digital-maturity/:id` - Digital maturity scoring
+- `GET /api/advanced/analytics/risk-analysis` - Comprehensive risk assessment
+- `GET /api/advanced/analytics/benchmarks` - Regional performance benchmarks
+
+**🛡️ Compliance Monitoring:**
+- `GET /api/advanced/compliance/report` - PDPL, NCA ECC, ISO 27001 compliance
+- `GET /api/advanced/compliance/history/:id` - Compliance trends over time
+- `GET /api/advanced/compliance/audit` - Detailed audit trail reports
+
+**⚙️ Workflow Automation:**
+- `POST /api/advanced/workflow/initiate` - Multi-level approval workflows
+- `POST /api/advanced/workflow/approve/:id` - Process approvals
+- `GET /api/advanced/workflow/budget-alerts` - Real-time budget monitoring
+- `POST /api/advanced/workflow/schedule-report` - Automated report scheduling
+- `POST /api/advanced/workflow/batch-operation` - Bulk operations
+
+**See `ADVANCED_FEATURES.md` for complete documentation**
 
 ### 📈 Regional Distribution
 - **Central Region (Riyadh):** 42 entities

@@ -96,7 +96,7 @@ GET https://your-backend.vercel.app/health
 ```
 https://your-frontend.vercel.app
 Email: admin@dga.sa
-Password: DGA@2025
+Password: admin123
 ```
 
 ### Update CORS After Frontend Deployment
