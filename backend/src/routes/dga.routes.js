@@ -97,6 +97,41 @@ router.get('/reporting/region/:region', dgaController.getRegionalReport);
 // @access  Private
 router.get('/reporting/kpis', dgaController.getKPIs);
 
+// ========== KPIs ==========
+
+// @route   GET /api/dga/kpis
+// @desc    Get all KPIs with optional filtering
+// @access  Private
+router.get('/kpis', dgaController.getAllKPIs);
+
+// ========== COMPLIANCE RECORDS ==========
+
+// @route   GET /api/dga/compliance-records
+// @desc    Get all compliance records with optional filtering
+// @access  Private
+router.get('/compliance-records', dgaController.getAllComplianceRecords);
+
+// ========== RISKS ==========
+
+// @route   GET /api/dga/risks
+// @desc    Get all risks with optional filtering
+// @access  Private
+router.get('/risks', dgaController.getAllRisks);
+
+// ========== STAKEHOLDER CONSENSUS ==========
+
+// @route   GET /api/dga/stakeholder-consensus
+// @desc    Get all stakeholder consensus entries with optional filtering
+// @access  Private
+router.get('/stakeholder-consensus', dgaController.getAllStakeholderConsensus);
+
+// ========== DIGITAL MATURITY SCORES ==========
+
+// @route   GET /api/dga/digital-maturity-scores
+// @desc    Get all digital maturity scores with optional filtering
+// @access  Private
+router.get('/digital-maturity-scores', dgaController.getAllDigitalMaturityScores);
+
 // ========== TICKETS ==========
 
 // @route   GET /api/dga/tickets
@@ -113,5 +148,34 @@ router.post('/tickets', dgaController.createTicket);
 // @desc    Update ticket
 // @access  Private
 router.put('/tickets/:id', dgaController.updateTicket);
+
+// ========== USERS ==========
+
+// @route   GET /api/dga/users
+// @desc    Get all users
+// @access  Private (DGA Admin only)
+router.get('/users', dgaController.getAllUsers);
+
+// @route   GET /api/dga/users/:id
+// @desc    Get user by ID
+// @access  Private
+router.get('/users/:id', dgaController.getUserById);
+
+// ========== FINANCE DEMO ==========
+
+// @route   GET /api/dga/finance/summary
+// @desc    Get finance summary for demo
+// @access  Private
+router.get('/finance/summary', dgaController.getFinanceSummary);
+
+// @route   GET /api/dga/finance/contracts
+// @desc    Get all contracts with entity info
+// @access  Private
+router.get('/finance/contracts', dgaController.getFinanceContracts);
+
+// @route   GET /api/dga/finance/invoices
+// @desc    Get recent invoices with contract details
+// @access  Private
+router.get('/finance/invoices', dgaController.getFinanceInvoices);
 
 module.exports = router;

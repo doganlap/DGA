@@ -6,7 +6,8 @@ import {
   FiBox, 
   FiDollarSign, 
   FiBarChart2, 
-  FiUsers 
+  FiUsers,
+  FiBriefcase
 } from 'react-icons/fi'
 
 function Sidebar() {
@@ -17,6 +18,7 @@ function Sidebar() {
     { path: '/entities', label: isAr ? 'الجهات' : 'Entities', icon: FiDatabase },
     { path: '/programs', label: isAr ? 'البرامج' : 'Programs', icon: FiBox },
     { path: '/budget', label: isAr ? 'الميزانية' : 'Budget', icon: FiDollarSign },
+    { path: '/finance-demo', label: isAr ? 'التحكم المالي' : 'Finance Control', icon: FiBriefcase },
     { path: '/reports', label: isAr ? 'التقارير' : 'Reports', icon: FiBarChart2 },
     { path: '/users', label: isAr ? 'المستخدمون' : 'Users', icon: FiUsers },
   ]

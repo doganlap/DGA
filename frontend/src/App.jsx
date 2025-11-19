@@ -8,6 +8,7 @@ import Programs from './pages/Programs'
 import Budget from './pages/Budget'
 import Reports from './pages/Reports'
 import Users from './pages/Users'
+import FinanceDemo from './pages/FinanceDemo'
 import Layout from './components/Layout'
 
 
@@ -25,6 +26,7 @@ function App() {
               <Route path="budget" element={<Budget />} />
               <Route path="reports" element={<Reports />} />
               <Route path="users" element={<Users />} />
+              <Route path="finance-demo" element={<FinanceDemo />} />
             </Route>
           </Routes>
         </Router>

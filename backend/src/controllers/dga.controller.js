@@ -542,6 +542,84 @@ exports.getKPIs = async (req, res) => {
   }
 };
 
+// ========== KPIs ==========
+
+exports.getAllKPIs = async (req, res) => {
+  try {
+    const { entity_id, program_id } = req.query;
+    let query = db('kpis');
+    if (entity_id) query = query.where('entity_id', entity_id);
+    if (program_id) query = query.where('program_id', program_id);
+    const kpis = await query.select('*').orderBy('created_at', 'desc');
+    res.json({ success: true, message: 'KPIs retrieved successfully', data: kpis });
+  } catch (error) {
+    logger.error('Get KPIs error:', error);
+    res.status(500).json({ success: false, message: 'Failed to retrieve KPIs', error: error.message });
+  }
+};
+
+// ========== COMPLIANCE RECORDS ==========
+
+exports.getAllComplianceRecords = async (req, res) => {
+  try {
+    const { entity_id, program_id } = req.query;
+    let query = db('compliance_records');
+    if (entity_id) query = query.where('entity_id', entity_id);
+    if (program_id) query = query.where('program_id', program_id);
+    const records = await query.select('*').orderBy('audit_date', 'desc');
+    res.json({ success: true, message: 'Compliance records retrieved successfully', data: records });
+  } catch (error) {
+    logger.error('Get compliance records error:', error);
+    res.status(500).json({ success: false, message: 'Failed to retrieve compliance records', error: error.message });
+  }
+};
+
+// ========== RISKS ==========
+
+exports.getAllRisks = async (req, res) => {
+  try {
+    const { entity_id, program_id } = req.query;
+    let query = db('risks');
+    if (entity_id) query = query.where('entity_id', entity_id);
+    if (program_id) query = query.where('program_id', program_id);
+    const risks = await query.select('*').orderBy('created_at', 'desc');
+    res.json({ success: true, message: 'Risks retrieved successfully', data: risks });
+  } catch (error) {
+    logger.error('Get risks error:', error);
+    res.status(500).json({ success: false, message: 'Failed to retrieve risks', error: error.message });
+  }
+};
+
+// ========== STAKEHOLDER CONSENSUS ==========
+
+exports.getAllStakeholderConsensus = async (req, res) => {
+  try {
+    const { program_id } = req.query;
+    let query = db('stakeholder_consensus');
+    if (program_id) query = query.where('program_id', program_id);
+    const consensus = await query.select('*').orderBy('created_at', 'desc');
+    res.json({ success: true, message: 'Stakeholder consensus retrieved successfully', data: consensus });
+  } catch (error) {
+    logger.error('Get stakeholder consensus error:', error);
+    res.status(500).json({ success: false, message: 'Failed to retrieve stakeholder consensus', error: error.message });
+  }
+};
+
+// ========== DIGITAL MATURITY SCORES ==========
+
+exports.getAllDigitalMaturityScores = async (req, res) => {
+  try {
+    const { entity_id } = req.query;
+    let query = db('digital_maturity_scores');
+    if (entity_id) query = query.where('entity_id', entity_id);
+    const scores = await query.select('*').orderBy('assessment_date', 'desc');
+    res.json({ success: true, message: 'Digital maturity scores retrieved successfully', data: scores });
+  } catch (error) {
+    logger.error('Get digital maturity scores error:', error);
+    res.status(500).json({ success: false, message: 'Failed to retrieve digital maturity scores', error: error.message });
+  }
+};
+
 // ========== TICKETS ==========
 
 exports.getAllTickets = async (req, res) => {
@@ -637,5 +715,151 @@ exports.updateTicket = async (req, res) => {
       message: 'Failed to update ticket',
       error: error.message,
     });
+  }
+};
+
+// ========== USERS ==========
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const { role, region, status, page = 1, limit = 1000 } = req.query;
+    
+    let query = db('dga_users')
+      .leftJoin('dga_entities', 'dga_users.entity_id', 'dga_entities.id')
+      .select(
+        'dga_users.*',
+        'dga_entities.entity_name as entity_name',
+        'dga_entities.region as entity_region'
+      );
+    
+    if (role) query = query.where({ 'dga_users.role': role });
+    if (region) query = query.where({ 'dga_users.region': region });
+    if (status) query = query.where({ 'dga_users.status': status });
+    
+    const offset = (page - 1) * limit;
+    const users = await query.limit(limit).offset(offset).orderBy('dga_users.name_en');
+    
+    // Remove passwords from response
+    const sanitizedUsers = users.map(user => {
+      const { password_hash, ...userWithoutPassword } = user;
+      return userWithoutPassword;
+    });
+    
+    const total = await db('dga_users').count('* as count').first();
+    
+    res.json({
+      success: true,
+      message: 'Users retrieved successfully',
+      data: sanitizedUsers,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total: parseInt(total.count),
+        pages: Math.ceil(total.count / limit),
+      },
+    });
+  } catch (error) {
+    logger.error('Get all users error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve users',
+      error: error.message,
+    });
+  }
+};
+
+exports.getUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const user = await db('dga_users')
+      .leftJoin('dga_entities', 'dga_users.entity_id', 'dga_entities.id')
+      .where({ 'dga_users.id': id })
+      .select(
+        'dga_users.*',
+        'dga_entities.entity_name as entity_name',
+        'dga_entities.region as entity_region'
+      )
+      .first();
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+    
+    // Remove password from response
+    const { password_hash, ...userWithoutPassword } = user;
+    
+    res.json({
+      success: true,
+      message: 'User retrieved successfully',
+      data: userWithoutPassword,
+    });
+  } catch (error) {
+    logger.error('Get user by ID error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve user',
+      error: error.message,
+    });
+  }
+};
+
+// ========== FINANCE DEMO ==========
+
+exports.getFinanceSummary = async (req, res) => {
+  try {
+    const [budget, contracts, invoices] = await Promise.all([
+      db('dga_budget').sum('allocated_amount as total_allocated').sum('spent_amount as total_spent').first(),
+      db('dga_contracts').count('* as count').sum('contract_value as value').first(),
+      db('dga_invoices').sum('amount as total_invoiced').first()
+    ]);
+    
+    res.json({
+      success: true,
+      data: {
+        budget_allocated: budget.total_allocated || 0,
+        budget_spent: budget.total_spent || 0,
+        utilization_pct: budget.total_allocated ? Math.round((budget.total_spent / budget.total_allocated) * 100) : 0,
+        active_contracts: contracts.count || 0,
+        contract_value: contracts.value || 0,
+        total_invoiced: invoices.total_invoiced || 0
+      }
+    });
+  } catch (error) {
+    logger.error('Finance summary error:', error);
+    res.status(500).json({ success: false, message: 'Failed to retrieve finance summary', error: error.message });
+  }
+};
+
+exports.getFinanceContracts = async (req, res) => {
+  try {
+    const contracts = await db('dga_contracts')
+      .leftJoin('dga_entities', 'dga_contracts.entity_id', 'dga_entities.entity_id')
+      .select('dga_contracts.*', 'dga_entities.entity_name_en as entity')
+      .orderBy('dga_contracts.created_at', 'desc');
+    
+    res.json({ success: true, data: contracts });
+  } catch (error) {
+    logger.error('Finance contracts error:', error);
+    res.status(500).json({ success: false, message: 'Failed to retrieve contracts', error: error.message });
+  }
+};
+
+exports.getFinanceInvoices = async (req, res) => {
+  try {
+    const invoices = await db('dga_invoices')
+      .leftJoin('dga_contracts', 'dga_invoices.contract_number', 'dga_contracts.contract_number')
+      .leftJoin('dga_entities', 'dga_contracts.entity_id', 'dga_entities.entity_id')
+      .select('dga_invoices.*', 'dga_contracts.vendor', 'dga_entities.entity_name_en as entity')
+      .orderBy('dga_invoices.due_date', 'desc')
+      .limit(20);
+    
+    res.json({ success: true, data: invoices });
+  } catch (error) {
+    logger.error('Finance invoices error:', error);
+    res.status(500).json({ success: false, message: 'Failed to retrieve invoices', error: error.message });
   }
 };
